@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <!--Bootsrap 4 CDN-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <!--Fontawesome CDN-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css"
+          integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="/auth/css/sidebar.css">
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+    <script type="text/javascript"
+            src="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/js/tempusdominus-bootstrap-4.min.js"></script>
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/tempusdominus-bootstrap-4/5.0.1/css/tempusdominus-bootstrap-4.min.css"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/js/select2.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.3/css/select2.min.css" rel="stylesheet" />
+</head>
+<body>
+<span style="font-size:30px;cursor:pointer;" onclick="openNav()">&#9776; TASK MANAGER</span>
+<a th:href="@{/logout}" class="link" data-toggle="tooltip" title="Logout">logout</a>
+<hr>
+
+<h1 class="text-center">タスク登録</h1>
+<div class="container">
+
+    <div class="row">
+        <!-- column -->
+        <div class="col-lg-12 col-md-12">
+
+            <div class="card" style="padding: 15px">
+                <div class="card-block">
+                    <form method="POST" class="form-horizontal form-material" th:object="${task}"
+                          th:action="@{/task/add}" enctype="multipart/form-data">
+                        <div class="form-group">
+                            <label for="name">Task</label>
+                            <div>
+                                <input type="text" class="form-control form-control-line" name="name"
+                                       id="name"
+                                       th:field="*{name}">
+                            </div>
+                            <small class="text-danger-padded"></small>
+                        </div>
+                        <div class="form-group">
+                            <label>Developper</label>
+                            <select class="form-control select2 select2-hidden-accessible" th:field="*{developper}" multiple="" data-placeholder="Select developper" style="width: 100%;" tabindex="-1" aria-hidden="true">
+                                <th:block th:unless="${#lists.isEmpty(listUser)}">
+                                    <option th:each="user,iterStat :${listUser}" th:value="${user.getFullName()}"><p th:text="${user.getFullName()}"></p></option>
+                                </th:block>
+                        </select> </div> <!-- /.form-group -->
+                        <div class="form-group">
+                            <label for="name" >Start Date</label>
+                            <div class="input-group date" id="datetimepicker1" data-target-input="nearest">
+                                <input type="text" class="form-control datetimepicker-input"
+                                       data-target="#datetimepicker1" name="start_date" th:field="*{start_date}"/>
+                                <div class="input-group-append" data-target="#datetimepicker1"
+                                     data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="name" >End Date</label>
+                            <div class="input-group date" id="datetimepicker2" data-target-input="nearest">
+                                <input type="text" class="form-control datetimepicker-input"
+                                       data-target="#datetimepicker2" name="end_date" th:field="*{end_date}"/>
+                                <div class="input-group-append" data-target="#datetimepicker2"
+                                     data-toggle="datetimepicker">
+                                    <div class="input-group-text"><i class="fa fa-calendar"></i></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group text-center">
+                            <div class="col-sm-12">
+                                <button class="btn btn-success">Add Task</button>
+                                <a th:href="@{'/task/list'}">
+                                    <button type="button" class="btn btn-primary">Back To List</button>
+                                </a>
+                            </div>
+
+                        </div>
+                    </form>
+
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+<script type="text/javascript">
+    $(function () {
+        $('#datetimepicker1').datetimepicker({format: 'YYYY-MM-DD'});
+
+    });
+    $(function () {
+        $('#datetimepicker2').datetimepicker({format: 'YYYY-MM-DD'});
+    });
+    $(document).ready(function() {
+        $('.select2').select2({
+            closeOnSelect: false
+        });
+    });
+</script>
+</body>
+</html>

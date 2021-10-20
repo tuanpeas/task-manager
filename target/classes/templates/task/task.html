@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+
+    <!--Bootsrap 4 CDN-->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+
+    <!--Fontawesome CDN-->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" integrity="sha384-mzrmE5qonljUremFsqc01SB46JvROS7bZs3IO2EmfFsd15uHvIt+Y8vEf7N7fWAU" crossorigin="anonymous">
+
+    <link rel="stylesheet" href="/auth/css/sidebar.css">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+</head>
+<body>
+
+<div id="myNav" class="overlay">
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <div class="overlay-content">
+        <a href="#">About</a>
+        <a href="#">Services</a>
+        <a href="#">Clients</a>
+        <a href="#">Contact</a>
+    </div>
+</div>
+<span style="font-size:30px;cursor:pointer;" onclick="openNav()">&#9776; TASK MANAGER</span>
+<a th:href="@{/logout}" class="link" data-toggle="tooltip" title="Logout">logout</a>
+<hr>
+
+<h1 class="text-center">TASK</h1>
+<div class="container">
+    <a th:href="@{'/task/add'}"><button type="button" class="btn btn-success" style="margin-bottom: 15px">タスク登録</button></a>
+<div class="row">
+    <!-- column -->
+    <div class="col-lg-8 col-md-8">
+
+        <div class="card"  style="padding: 15px">
+            <div class="card-block">
+                <div class="text-center" style="height: 30px;">未完了タスクの一覧</div>
+                <div class="" style="font-size: 10pt">
+
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Task</th>
+                            <th scope="col">Developper</th>
+                            <th scope="col">Start Date</th>
+                            <th scope="col">End Date</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <th:block th:if="${#lists.isEmpty(taskListNotComplete)}">
+                            <td colspan="6" style="text-align: center">未完了タスクがありません</td>
+                        </th:block>
+                            <th:block th:unless="${#lists.isEmpty(taskListNotComplete)}">
+                        <tr th:each="task,iterStat :${taskListNotComplete}">
+                            <td><a th:href="@{'/task/detail/' + ${task.id}}"><p th:text="${iterStat.count}"></p></a></td>
+                            <td><a th:href="@{'/task/detail/' + ${task.id}}"><p th:text="${task.name}"></p></a></td>
+                            <td><a th:href="@{'/task/detail/' + ${task.id}}"><p th:text="${task.developper}"></p></a></td>
+                            <td><a th:href="@{'/task/detail/' + ${task.id}}"><p th:text="${#dates.format(task.start_date, 'yyyy-MM-dd')}"></p></a></td>
+                            <td><a th:href="@{'/task/detail/' + ${task.id}}"><p th:text="${#dates.format(task.end_date, 'yyyy-MM-dd')}"></p></a></td>
+                            <td>
+                                <a th:href="@{'/task/complete/' + ${task.id}}">
+                                    <button type="button" class="btn btn-primary">完了</button>
+                                </a>
+                                <button type="button" class="btn btn-danger" data-toggle="modal" data-target="#exampleModal" th:onclick="'deleteTask(\'' +${task.id} +'\')'">
+                                    削除
+                                </button>
+                            </td>
+
+                        </tr>
+                        </th:block>
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="container">
+                    <div class="row justify-content-center align-items-center">
+                        <th:block th:if="${totalPagesNotComplete ==0 }"></th:block>
+                        <th:block th:if="${totalPagesNotComplete > 0 }">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination">
+                                    <!--<li class="page-item"><a class="page-link"-->
+                                    <!--th:href="@{'/task/list?pageNumber='+ ${indexPage}}">Previous</a>-->
+                                    <!--</li>-->
+                                    <th:block th:each="indexPageNotComplete : ${#numbers.sequence(1,totalPagesNotComplete, 1)}">
+
+                                        <li class="page-item"><a class="page-link"
+                                                                 th:href="@{'/task/list?pageNumber='+ ${indexPageNotComplete-1}}"><span
+                                                th:text="${indexPageNotComplete}"></span></a>
+                                        </li>
+                                    </th:block>
+                                    <!--<li class="page-item"><a class="page-link"-->
+                                    <!--th:href="@{'/task/list?pageNumber='+ ${indexPage}}">Next</a>-->
+                                    <!--</li>-->
+                                </ul>
+                            </nav>
+                        </th:block>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="col-lg-4 col-md-4">
+
+        <div class="card"  style="padding: 15px">
+            <div class="card-block">
+               <div class="text-center" style="height: 30px;">完了タスクの一覧</div>
+                <div class="" style="font-size: 10pt">
+
+                    <table class="table table-striped">
+                        <thead>
+                        <tr>
+                            <th scope="col">#</th>
+                            <th scope="col">Task</th>
+                            <th scope="col">Developper</th>
+                            <th scope="col">Action</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <th:block th:if="${#lists.isEmpty(taskList)}">
+                            <td colspan="4" style="text-align: center">完了タスクがありません</td>
+                        </th:block>
+                        <th:block th:unless="${#lists.isEmpty(taskList)}">
+                            <tr th:each="task2,iterStat :${taskList}">
+                                <td><a th:href="@{'/task/detail/' + ${task2.id}}"><p th:text="${iterStat.count}"></p>
+                                </a></td>
+                                <td><a th:href="@{'/task/detail/' + ${task2.id}}"><p th:text="${task2.name}"></p></a>
+                                </td>
+                                <td><a th:href="@{'/task/detail/' + ${task2.id}}"><p th:text="${task2.developper}"></p>
+                                </a></td>
+                                <td>
+                                    <a th:href="@{'/task/not-complete/' + ${task2.id}}">
+                                        <button type="button" class="btn btn-danger">未完了</button>
+                                    </a>
+                                </td>
+
+                            </tr>
+                        </th:block>
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="container">
+                    <div class="row justify-content-center align-items-center">
+                        <th:block th:if="${totalPages ==0 }"></th:block>
+                        <th:block th:if="${totalPages > 0 }">
+                            <nav aria-label="Page navigation example">
+                                <ul class="pagination">
+                                    <!--<li class="page-item"><a class="page-link"-->
+                                                             <!--th:href="@{'/task/list?pageNumber='+ ${indexPage}}">Previous</a>-->
+                                    <!--</li>-->
+                                    <th:block th:each="indexPage : ${#numbers.sequence(1,totalPages, 1)}">
+
+                                        <li class="page-item"><a class="page-link"
+                                                                 th:href="@{'/task/list?pageNumber='+ ${indexPage-1}}"><span
+                                                th:text="${indexPage}"></span></a>
+                                        </li>
+                                    </th:block>
+                                    <!--<li class="page-item"><a class="page-link"-->
+                                                             <!--th:href="@{'/task/list?pageNumber='+ ${indexPage}}">Next</a>-->
+                                    <!--</li>-->
+                                </ul>
+                            </nav>
+                        </th:block>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLabel">削除</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                本当によろしいですね？
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">キャンセル</button>
+
+                <a id="btn-delete" th:href="@{'/task/destroy/' + 'id'}">
+                <button  type="button" class="btn btn-primary">削除</button>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<script>
+    function openNav() {
+        document.getElementById("myNav").style.width = "20%";
+    }
+
+    function closeNav() {
+        document.getElementById("myNav").style.width = "0%";
+    }
+
+    function deleteTask(id) {
+       $('#btn-delete').click(function () {
+         var href =  $('#btn-delete').attr('href');
+         var newhref = href.replace('/id','/'+id);
+           $('#btn-delete').attr('href', newhref);
+       })
+    }
+</script>
+
+</body>
+</html>
